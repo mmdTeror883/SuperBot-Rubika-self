@@ -35,10 +35,6 @@ B = '\033[94m'
 P = '\033[95m'
 C = '\033[96m'
 W = '\033[97m'
-BL = '\033[30m'
-BG = '\033[42m'
-BR = '\033[41m'
-BY = '\033[43m'
 RESET = '\033[0m'
 BOLD = '\033[1m'
 DIM = '\033[2m'
@@ -63,6 +59,7 @@ class SuperBot:
         self.interval = 2
         self.active_chats = {}
         self.last_time = {}
+        self.font_mode = "normal"
         self.user_folder = f"users/{USER_ID}"
         if not os.path.exists(self.user_folder):
             os.makedirs(self.user_folder)
@@ -82,29 +79,16 @@ class SuperBot:
         banner = f"""
 {G}{BOLD}
 ╔══════════════════════════════════════════════════════════════════════════════════════╗
-║                                                                                      ║
-║   ███████╗██╗   ██╗██████╗ ███████╗██████╗     ██████╗  ██████╗ ████████╗            ║
-║   ██╔════╝██║   ██║██╔══██╗██╔════╝██╔══██╗    ██╔══██╗██╔═══██╗╚══██╔══╝            ║
-║   ███████╗██║   ██║██████╔╝█████╗  ██████╔╝    ██████╔╝██║   ██║   ██║               ║
-║   ╚════██║██║   ██║██╔═══╝ ██╔══╝  ██╔══██╗    ██╔══██╗██║   ██║   ██║               ║
-║   ███████║╚██████╔╝██║     ███████╗██║  ██║    ██████╔╝╚██████╔╝   ██║               ║
-║   ╚══════╝ ╚═════╝ ╚═╝     ╚══════╝╚═╝  ╚═╝    ╚═════╝  ╚═════╝    ╚═╝               ║
-║                                                                                      ║
-║                    ██████╗ ███████╗████████╗██╗   ██╗██████╗ ███╗   ██╗            ║
-║                    ██╔══██╗██╔════╝╚══██╔══╝╚██╗ ██╔╝██╔══██╗████╗  ██║            ║
-║                    ██████╔╝█████╗     ██║    ╚████╔╝ ██████╔╝██╔██╗ ██║            ║
-║                    ██╔══██╗██╔══╝     ██║     ╚██╔╝  ██╔══██╗██║╚██╗██║            ║
-║                    ██████╔╝███████╗   ██║      ██║   ██║  ██║██║ ╚████║            ║
-║                    ╚═════╝ ╚══════╝   ╚═╝      ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝            ║
-║                                                                                      ║
+║                         SUPER BOT v8.0 - ULTIMATE EDITION                           ║
 ╠══════════════════════════════════════════════════════════════════════════════════════╣
 ║  {C}[+] User: {USER_ID}{' ' * (68 - len(USER_ID))}{G}║
-║  {C}[+] Version: 7.0.0 Ultimate{RESET}{G}{' ' * 57}║
+║  {C}[+] Version: 8.0.0 Ultimate{RESET}{G}{' ' * 57}║
 ║  {C}[+] Auto Backup: kaizofil.ir{RESET}{G}{' ' * 58}║
-║  {C}[+] Sync Interval: 60 seconds{RESET}{G}{' ' * 55}║
+║  {C}[+] Font Mode: {self.font_mode}{' ' * (67 - len(self.font_mode))}{G}║
 ╠══════════════════════════════════════════════════════════════════════════════════════╣
 ║  {Y}[!] MAIN COMMANDS{RESET}{G}{' ' * 66}║
 ║  {C}    .panel    .set      .add      .list     .remove   .clear     .interval{RESET}{G}║
+║  {C}    .font     .font on  .font off{RESET}{G}{' ' * 50}║
 ║  {Y}[!] GAMES{RESET}{G}{' ' * 73}║
 ║  {C}    .dice     .coin     .slot     .love     .rps      .blackjack .roulette{RESET}{G}║
 ║  {Y}[!] ECONOMY{RESET}{G}{' ' * 72}║
@@ -112,7 +96,7 @@ class SuperBot:
 ║  {C}    .bank     .deposit  .withdraw .loan     .pay      .shop      .buy{RESET}{G}    ║
 ║  {Y}[!] WEAPONS{RESET}{G}{' ' * 72}║
 ║  {C}    .weapons  .buygun   .shoot    .bullets  .armor    .heal{RESET}{G}             ║
-║  {Y}[!] MISSIONS{RESET}{G}{' ' * 70}║
+║  {Y}[!] MISSIONS & ACHIEVEMENTS{RESET}{G}{' ' * 57}║
 ║  {C}    .mission  .achievements{RESET}{G}{' ' * 62}║
 ║  {Y}[!] TOOLS{RESET}{G}{' ' * 73}║
 ║  {C}    .time     .id       .ping     .stats    .status   .info     .calc{RESET}{G}   ║
@@ -121,12 +105,19 @@ class SuperBot:
 ║  {C}    .warn     .ban      .unban    .mute     .kick     .promote  .demote{RESET}{G} ║
 ║  {C}    .setadmin .setrule  .welcome  .lock     .unlock{RESET}{G}                    ║
 ╠══════════════════════════════════════════════════════════════════════════════════════╣
-║  {G}[+] Total Commands: 60+{RESET}{G}{' ' * 62}║
+║  {G}[+] Total Commands: 65+{RESET}{G}{' ' * 62}║
 ║  {G}[+] Database: SQLite + JSON{RESET}{G}{' ' * 57}║
-║  {G}[+] Auto Backup: Enabled{RESET}{G}{' ' * 62}║
+║  {G}[+] Auto Backup: Enabled (60s){RESET}{G}{' ' * 55}║
 ╚══════════════════════════════════════════════════════════════════════════════════════╝
 {RESET}"""
         print(banner)
+    
+    def apply_font(self, text):
+        if self.font_mode == "bold":
+            return f"**{text}**"
+        elif self.font_mode == "italic":
+            return f"__{text}__"
+        return text
     
     def init_database(self):
         self.db_path = f"{self.user_folder}/bot.db"
@@ -157,8 +148,7 @@ class SuperBot:
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id TEXT,
                 item_name TEXT,
-                quantity INTEGER DEFAULT 1,
-                FOREIGN KEY (user_id) REFERENCES users(user_id)
+                quantity INTEGER DEFAULT 1
             )
         ''')
         
@@ -168,8 +158,7 @@ class SuperBot:
                 user_id TEXT,
                 weapon_name TEXT,
                 damage INTEGER,
-                durability INTEGER DEFAULT 100,
-                FOREIGN KEY (user_id) REFERENCES users(user_id)
+                durability INTEGER DEFAULT 100
             )
         ''')
         
@@ -178,8 +167,7 @@ class SuperBot:
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id TEXT,
                 bullet_type TEXT,
-                quantity INTEGER DEFAULT 0,
-                FOREIGN KEY (user_id) REFERENCES users(user_id)
+                quantity INTEGER DEFAULT 0
             )
         ''')
         
@@ -192,8 +180,7 @@ class SuperBot:
                 target INTEGER,
                 reward INTEGER,
                 completed INTEGER DEFAULT 0,
-                claimed INTEGER DEFAULT 0,
-                FOREIGN KEY (user_id) REFERENCES users(user_id)
+                claimed INTEGER DEFAULT 0
             )
         ''')
         
@@ -202,8 +189,7 @@ class SuperBot:
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id TEXT,
                 achievement_name TEXT,
-                unlocked_at TEXT,
-                FOREIGN KEY (user_id) REFERENCES users(user_id)
+                unlocked_at TEXT
             )
         ''')
         
@@ -215,8 +201,7 @@ class SuperBot:
                 interest INTEGER,
                 taken_at INTEGER,
                 due_at INTEGER,
-                paid INTEGER DEFAULT 0,
-                FOREIGN KEY (user_id) REFERENCES users(user_id)
+                paid INTEGER DEFAULT 0
             )
         ''')
         
@@ -236,33 +221,33 @@ class SuperBot:
     
     def init_shop(self):
         self.shop_items = {
-            "sword": {"name": "⚔️ Sword", "price": 500, "damage": 10},
-            "bow": {"name": "🏹 Bow", "price": 300, "damage": 7},
-            "axe": {"name": "🪓 Axe", "price": 400, "damage": 8},
-            "dagger": {"name": "🗡️ Dagger", "price": 200, "damage": 5},
-            "spear": {"name": "🔱 Spear", "price": 600, "damage": 12},
-            "hammer": {"name": "🔨 Hammer", "price": 700, "damage": 15},
-            "shield": {"name": "🛡️ Shield", "price": 300, "defense": 5},
-            "helmet": {"name": "⛑️ Helmet", "price": 200, "defense": 3},
-            "armor": {"name": "🦺 Armor", "price": 500, "defense": 8},
-            "potion": {"name": "🧪 Health Potion", "price": 100, "heal": 50},
-            "elixir": {"name": "✨ Elixir", "price": 500, "heal": 100},
-            "ring": {"name": "💍 Ring", "price": 1000, "luck": 5},
-            "amulet": {"name": "📿 Amulet", "price": 1500, "luck": 10},
-            "cape": {"name": "🧥 Cape", "price": 800, "speed": 5},
-            "boots": {"name": "👢 Boots", "price": 400, "speed": 3}
+            "sword": {"name": "Sword", "price": 500, "damage": 10},
+            "bow": {"name": "Bow", "price": 300, "damage": 7},
+            "axe": {"name": "Axe", "price": 400, "damage": 8},
+            "dagger": {"name": "Dagger", "price": 200, "damage": 5},
+            "spear": {"name": "Spear", "price": 600, "damage": 12},
+            "hammer": {"name": "Hammer", "price": 700, "damage": 15},
+            "shield": {"name": "Shield", "price": 300, "defense": 5},
+            "helmet": {"name": "Helmet", "price": 200, "defense": 3},
+            "armor": {"name": "Armor", "price": 500, "defense": 8},
+            "potion": {"name": "Health Potion", "price": 100, "heal": 50},
+            "elixir": {"name": "Elixir", "price": 500, "heal": 100},
+            "ring": {"name": "Ring", "price": 1000, "luck": 5},
+            "amulet": {"name": "Amulet", "price": 1500, "luck": 10},
+            "cape": {"name": "Cape", "price": 800, "speed": 5},
+            "boots": {"name": "Boots", "price": 400, "speed": 3}
         }
     
     def init_weapons(self):
         self.weapons = {
-            "pistol": {"name": "🔫 Pistol", "damage": 15, "price": 1000, "ammo": 6},
-            "shotgun": {"name": "🔫 Shotgun", "damage": 30, "price": 2000, "ammo": 2},
-            "rifle": {"name": "🔫 Rifle", "damage": 25, "price": 2500, "ammo": 5},
-            "sniper": {"name": "🎯 Sniper", "damage": 50, "price": 5000, "ammo": 3},
-            "minigun": {"name": "💥 Minigun", "damage": 10, "price": 8000, "ammo": 30},
-            "rpg": {"name": "💣 RPG", "damage": 100, "price": 15000, "ammo": 1},
-            "flamethrower": {"name": "🔥 Flamethrower", "damage": 20, "price": 10000, "ammo": 10},
-            "laser": {"name": "⚡ Laser Gun", "damage": 40, "price": 20000, "ammo": 8}
+            "pistol": {"name": "Pistol", "damage": 15, "price": 1000, "ammo": 6},
+            "shotgun": {"name": "Shotgun", "damage": 30, "price": 2000, "ammo": 2},
+            "rifle": {"name": "Rifle", "damage": 25, "price": 2500, "ammo": 5},
+            "sniper": {"name": "Sniper", "damage": 50, "price": 5000, "ammo": 3},
+            "minigun": {"name": "Minigun", "damage": 10, "price": 8000, "ammo": 30},
+            "rpg": {"name": "RPG", "damage": 100, "price": 15000, "ammo": 1},
+            "flamethrower": {"name": "Flamethrower", "damage": 20, "price": 10000, "ammo": 10},
+            "laser": {"name": "Laser Gun", "damage": 40, "price": 20000, "ammo": 8}
         }
     
     def init_missions(self):
@@ -279,9 +264,9 @@ class SuperBot:
     
     def init_achievements(self):
         self.achievements_list = [
-            "🏆 Welcome", "⭐ Level 5", "⭐ Level 10", "⭐ Level 20",
-            "💰 Millionaire", "💰 Billionaire", "🎮 Gamer", "🔫 Killer",
-            "🏦 Banker", "🤝 Helper", "👑 Legend"
+            "Welcome", "Level 5", "Level 10", "Level 20",
+            "Millionaire", "Billionaire", "Gamer", "Killer",
+            "Banker", "Helper", "Legend"
         ]
     
     def load_data(self):
@@ -405,94 +390,103 @@ class SuperBot:
     
     def send(self, chat_id, text):
         try:
-            return self.client.send_text(chat_id, text)
+            formatted_text = self.apply_font(text)
+            return self.client.send_text(chat_id, formatted_text)
         except:
             return None
     
     def love_anim(self, chat_id):
         try:
-            r = self.client.send_text(chat_id, "💘")
+            r = self.client.send_text(chat_id, self.apply_font("💘"))
             mid = r['message_update']['message_id']
             for i in range(2, 31):
                 time.sleep(0.1)
-                self.client.send_text(chat_id, "💘" * i, message_id=mid)
-            self.client.send_text(chat_id, "💘" * 30 + "\n❤️ 100% LOVE ❤️", message_id=mid)
+                self.client.edit_message(mid, chat_id, self.apply_font("💘" * i))
+            self.client.edit_message(mid, chat_id, self.apply_font("💘" * 30 + "\nLOVE 100%"))
         except:
             pass
     
-    def panel(self):
+    def panel_part1(self):
         return f"""
-{G}{BOLD}╔════════════════════════════════════════════════════════════════════╗{RESET}
-{G}{BOLD}║                    SUPER BOT v7.0 COMMANDS                         ║{RESET}
-{G}{BOLD}╠════════════════════════════════════════════════════════════════════╣{RESET}
-{Y}║ [MAIN]                                                                  ║{RESET}
-{Y}║   .set     - Start/Stop auto reply                                     ║{RESET}
-{Y}║   .add txt - Add new reply                                             ║{RESET}
-{Y}║   .list    - Show my replies                                           ║{RESET}
-{Y}║   .remove n- Remove reply                                              ║{RESET}
-{Y}║   .clear   - Clear all replies                                         ║{RESET}
-{Y}║   .interval n - Set speed (1-10)                                       ║{RESET}
-{Y}╠════════════════════════════════════════════════════════════════════╣{RESET}
-{Y}║ [GAMES]                                                                 ║{RESET}
-{Y}║   .dice    - Roll dice (1-6) +points                                   ║{RESET}
-{Y}║   .coin    - Flip coin (HEAD/TAIL) +5                                  ║{RESET}
-{Y}║   .slot    - Slot machine (JACKPOT 100)                                ║{RESET}
-{Y}║   .love    - Love animation (30 steps)                                 ║{RESET}
-{Y}║   .rps     - Rock Paper Scissors                                       ║{RESET}
-{Y}║   .blackjack - Blackjack game                                          ║{RESET}
-{Y}║   .roulette - Russian Roulette                                         ║{RESET}
-{Y}╠════════════════════════════════════════════════════════════════════╣{RESET}
-{Y}║ [ECONOMY]                                                              ║{RESET}
-{Y}║   .work    - Work for money (50-200)                                   ║{RESET}
-{Y}║   .daily   - Daily reward (100-500)                                    ║{RESET}
-{Y}║   .money   - Check balance                                             ║{RESET}
-{Y}║   .score   - Check points                                              ║{RESET}
-{Y}║   .top     - Top 10 players                                            ║{RESET}
-{Y}║   .transfer @user amt - Send money                                     ║{RESET}
-{Y}║   .rob @user - Rob other player (risk)                                 ║{RESET}
-{Y}║   .bank    - Bank info                                                 ║{RESET}
-{Y}║   .deposit amt - Deposit to bank                                       ║{RESET}
-{Y}║   .withdraw amt - Withdraw from bank                                   ║{RESET}
-{Y}║   .loan amt - Take loan (max 10000)                                    ║{RESET}
-{Y}║   .pay     - Pay loan back                                             ║{RESET}
-{Y}║   .shop    - Show shop items                                           ║{RESET}
-{Y}║   .buy item - Buy from shop                                            ║{RESET}
-{Y}╠════════════════════════════════════════════════════════════════════╣{RESET}
-{Y}║ [WEAPONS]                                                              ║{RESET}
-{Y}║   .weapons - Show weapons list                                         ║{RESET}
-{Y}║   .buygun gun - Buy weapon                                             ║{RESET}
-{Y}║   .shoot @user - Shoot other player                                    ║{RESET}
-{Y}║   .bullets - Buy bullets                                               ║{RESET}
-{Y}║   .armor   - Buy armor                                                 ║{RESET}
-{Y}║   .heal    - Heal yourself                                             ║{RESET}
-{Y}╠════════════════════════════════════════════════════════════════════╣{RESET}
-{Y}║ [MISSIONS]                                                             ║{RESET}
-{Y}║   .mission - Show current missions                                     ║{RESET}
-{Y}║   .achievements - Show unlocked achievements                           ║{RESET}
-{Y}╠════════════════════════════════════════════════════════════════════╣{RESET}
-{Y}║ [TOOLS]                                                                ║{RESET}
-{Y}║   .time    - Current date & time                                       ║{RESET}
-{Y}║   .id      - Chat ID                                                   ║{RESET}
-{Y}║   .ping    - Bot response time                                         ║{RESET}
-{Y}║   .stats   - My statistics                                             ║{RESET}
-{Y}║   .status  - Bot status                                                ║{RESET}
-{Y}║   .info    - Bot info                                                  ║{RESET}
-{Y}║   .calc 2+2 - Calculator                                              ║{RESET}
-{Y}║   .reverse text - Reverse text                                         ║{RESET}
-{Y}║   .quote   - Random quote                                              ║{RESET}
-{Y}║   .joke    - Random joke                                               ║{RESET}
-{Y}║   .fact    - Random fact                                               ║{RESET}
-{Y}║   .weather - Weather info                                              ║{RESET}
-{Y}║   .news    - Latest news                                               ║{RESET}
-{Y}╠════════════════════════════════════════════════════════════════════╣{RESET}
-{Y}║ [ADMIN]                                                                ║{RESET}
-{Y}║   .warn @user - Warn user                                              ║{RESET}
-{Y}║   .ban @user  - Ban user                                               ║{RESET}
-{Y}║   .unban @user - Unban user                                            ║{RESET}
-{Y}║   .mute @user - Mute user                                              ║{RESET}
-{Y}║   .kick @user - Kick user                                              ║{RESET}
-{Y}╠════════════════════════════════════════════════════════════════════╣{RESET}
-{G}{BOLD}╚════════════════════════════════════════════════════════════════════╝{RESET}
+{G}{BOLD}╔════════════════════════════════════════════════════════════╗{RESET}
+{G}{BOLD}║              SUPER BOT v8.0 - MAIN PANEL (1/3)           ║{RESET}
+{G}{BOLD}╠════════════════════════════════════════════════════════════╣{RESET}
+{Y}║ [MAIN COMMANDS]                                               ║{RESET}
+{Y}║   .set     - Start/Stop auto reply                           ║{RESET}
+{Y}║   .add txt - Add new reply                                   ║{RESET}
+{Y}║   .list    - Show my replies                                 ║{RESET}
+{Y}║   .remove n- Remove reply                                    ║{RESET}
+{Y}║   .clear   - Clear all replies                               ║{RESET}
+{Y}║   .interval n - Set speed (1-10)                             ║{RESET}
+{Y}║   .font on/off - Enable/Disable bold/italic mode             ║{RESET}
+{Y}╠════════════════════════════════════════════════════════════╣{RESET}
+{Y}║ [GAMES]                                                      ║{RESET}
+{Y}║   .dice    - Roll dice (1-6) +points                         ║{RESET}
+{Y}║   .coin    - Flip coin +5                                    ║{RESET}
+{Y}║   .slot    - Slot machine (JACKPOT 100)                      ║{RESET}
+{Y}║   .love    - Love animation (30 steps)                       ║{RESET}
+{Y}║   .rps rock/paper/scissors - Play RPS                        ║{RESET}
+{Y}║   .blackjack - Blackjack game                                ║{RESET}
+{G}{BOLD}╚════════════════════════════════════════════════════════════╝{RESET}
+"""
+    
+    def panel_part2(self):
+        return f"""
+{G}{BOLD}╔════════════════════════════════════════════════════════════╗{RESET}
+{G}{BOLD}║              SUPER BOT v8.0 - MAIN PANEL (2/3)           ║{RESET}
+{G}{BOLD}╠════════════════════════════════════════════════════════════╣{RESET}
+{Y}║ [ECONOMY]                                                     ║{RESET}
+{Y}║   .work    - Work for money (50-200)                          ║{RESET}
+{Y}║   .daily   - Daily reward (100-500)                           ║{RESET}
+{Y}║   .money   - Check balance                                    ║{RESET}
+{Y}║   .score   - Check points                                     ║{RESET}
+{Y}║   .top     - Top 10 players                                   ║{RESET}
+{Y}║   .transfer @user amt - Send money                            ║{RESET}
+{Y}║   .rob @user - Rob other player                               ║{RESET}
+{Y}║   .bank    - Bank info                                        ║{RESET}
+{Y}║   .deposit amt - Deposit to bank                              ║{RESET}
+{Y}║   .withdraw amt - Withdraw from bank                          ║{RESET}
+{Y}║   .loan amt - Take loan (max 10000)                           ║{RESET}
+{Y}║   .pay     - Pay loan back                                    ║{RESET}
+{Y}║   .shop    - Show shop items                                  ║{RESET}
+{Y}║   .buy item - Buy from shop                                   ║{RESET}
+{Y}╠════════════════════════════════════════════════════════════╣{RESET}
+{Y}║ [WEAPONS]                                                     ║{RESET}
+{Y}║   .weapons - Show weapons list                                ║{RESET}
+{Y}║   .buygun gun - Buy weapon                                    ║{RESET}
+{Y}║   .shoot @user - Shoot other player                           ║{RESET}
+{G}{BOLD}╚════════════════════════════════════════════════════════════╝{RESET}
+"""
+    
+    def panel_part3(self):
+        return f"""
+{G}{BOLD}╔════════════════════════════════════════════════════════════╗{RESET}
+{G}{BOLD}║              SUPER BOT v8.0 - MAIN PANEL (3/3)           ║{RESET}
+{G}{BOLD}╠════════════════════════════════════════════════════════════╣{RESET}
+{Y}║ [MISSIONS & ACHIEVEMENTS]                                     ║{RESET}
+{Y}║   .mission - Show current missions                            ║{RESET}
+{Y}║   .achievements - Show unlocked achievements                  ║{RESET}
+{Y}╠════════════════════════════════════════════════════════════╣{RESET}
+{Y}║ [TOOLS]                                                       ║{RESET}
+{Y}║   .time    - Current date & time                              ║{RESET}
+{Y}║   .id      - Chat ID                                          ║{RESET}
+{Y}║   .ping    - Bot response time                                ║{RESET}
+{Y}║   .stats   - My statistics                                    ║{RESET}
+{Y}║   .status  - Bot status                                       ║{RESET}
+{Y}║   .info    - Bot info                                         ║{RESET}
+{Y}║   .calc 2+2 - Calculator                                      ║{RESET}
+{Y}║   .reverse text - Reverse text                                ║{RESET}
+{Y}║   .quote   - Random quote                                     ║{RESET}
+{Y}║   .joke    - Random joke                                      ║{RESET}
+{Y}║   .fact    - Random fact                                      ║{RESET}
+{Y}║   .weather - Weather info                                     ║{RESET}
+{Y}║   .news    - Latest news                                      ║{RESET}
+{Y}╠════════════════════════════════════════════════════════════╣{RESET}
+{Y}║ [ADMIN]                                                       ║{RESET}
+{Y}║   .warn @user - Warn user                                     ║{RESET}
+{Y}║   .ban @user  - Ban user                                      ║{RESET}
+{Y}║   .unban @user - Unban user                                   ║{RESET}
+{G}{BOLD}╚════════════════════════════════════════════════════════════╝{RESET}
 """
     
     def run(self):
@@ -506,9 +500,33 @@ class SuperBot:
             
             print(f"{C}[{datetime.now().strftime('%H:%M:%S')}] {chat_id[:15]} -> {text[:50]}{RESET}")
             
-            # Panel
+            # Panel (3 parts)
             if text == ".panel":
-                self.send(chat_id, self.panel())
+                self.send(chat_id, self.panel_part1())
+                time.sleep(0.5)
+                self.send(chat_id, self.panel_part2())
+                time.sleep(0.5)
+                self.send(chat_id, self.panel_part3())
+                return
+            
+            # Font mode
+            if text == ".font on":
+                self.font_mode = "bold"
+                self.send(chat_id, f"{G}[FONT] Bold mode enabled!{RESET}")
+                return
+            
+            if text == ".font italic":
+                self.font_mode = "italic"
+                self.send(chat_id, f"{G}[FONT] Italic mode enabled!{RESET}")
+                return
+            
+            if text == ".font off":
+                self.font_mode = "normal"
+                self.send(chat_id, f"{G}[FONT] Normal mode enabled!{RESET}")
+                return
+            
+            if text == ".font":
+                self.send(chat_id, f"{G}[FONT] Current mode: {self.font_mode}{RESET}\n{G}Usage: .font on (bold) | .font italic | .font off{RESET}")
                 return
             
             # Love
@@ -645,7 +663,7 @@ class SuperBot:
             if text.startswith(".rps "):
                 parts = text[5:].split()
                 if len(parts) < 2:
-                    self.send(chat_id, f"{R}Usage: .rps [rock/paper/scissors] [amount]{RESET}")
+                    self.send(chat_id, f"{R}Usage: .rps rock/paper/scissors [amount]{RESET}")
                     return
                 
                 choice = parts[0].lower()
@@ -664,7 +682,6 @@ class SuperBot:
                     return
                 
                 bot_choice = random.choice(choices)
-                emojis = {"rock": "🪨", "paper": "📄", "scissors": "✂️"}
                 
                 if choice == bot_choice:
                     result = "DRAW"
@@ -683,46 +700,7 @@ class SuperBot:
                     self.money -= bet
                 
                 self.save_data()
-                self.send(chat_id, f"{C}You: {emojis[choice]} | Bot: {emojis[bot_choice]}{RESET}\n{Y}[{result}]{RESET}\n{G}{'+' if win_amount > 0 else ''}{win_amount} coins{RESET}\n{G}Balance: {self.money}{RESET}")
-                return
-            
-            # Blackjack
-            if text == ".blackjack":
-                if self.money < 50:
-                    self.send(chat_id, f"{R}[!] Need at least 50 coins!{RESET}")
-                    return
-                
-                bet = min(50, self.money)
-                self.money -= bet
-                
-                player_cards = [random.randint(1, 11), random.randint(1, 11)]
-                dealer_cards = [random.randint(1, 11), random.randint(1, 11)]
-                player_sum = sum(player_cards)
-                dealer_sum = sum(dealer_cards)
-                
-                if player_sum == 21:
-                    win_amount = bet * 2
-                    self.money += win_amount
-                    result = f"{G}BLACKJACK! You win! +{win_amount}{RESET}"
-                elif player_sum > 21:
-                    result = f"{R}BUST! You lose! -{bet}{RESET}"
-                else:
-                    while dealer_sum < 17:
-                        dealer_cards.append(random.randint(1, 11))
-                        dealer_sum = sum(dealer_cards)
-                    
-                    if dealer_sum > 21 or player_sum > dealer_sum:
-                        win_amount = bet * 2
-                        self.money += win_amount
-                        result = f"{G}You win! +{win_amount}{RESET}"
-                    elif player_sum < dealer_sum:
-                        result = f"{R}You lose! -{bet}{RESET}"
-                    else:
-                        self.money += bet
-                        result = f"{Y}Push! Bet returned{RESET}"
-                
-                self.save_data()
-                self.send(chat_id, f"{C}Your cards: {player_cards} = {player_sum}{RESET}\n{C}Dealer cards: {dealer_cards[:1]} + ?{RESET}\n{result}\n{G}Balance: {self.money}{RESET}")
+                self.send(chat_id, f"{C}You: {choice} | Bot: {bot_choice}{RESET}\n{Y}[{result}]{RESET}\n{G}{'+' if win_amount > 0 else ''}{win_amount} coins{RESET}\n{G}Balance: {self.money}{RESET}")
                 return
             
             # Work
@@ -731,7 +709,7 @@ class SuperBot:
                 self.money += earnings
                 self.add_mission_progress("Rich Begins", earnings)
                 self.save_data()
-                jobs = ["💻 Programmer", "📝 Writer", "🎨 Designer", "📚 Teacher", "🔧 Mechanic", "👨‍🍳 Chef", "🚛 Driver"]
+                jobs = ["Programmer", "Writer", "Designer", "Teacher", "Mechanic", "Chef", "Driver"]
                 self.send(chat_id, f"{G}[WORK] {random.choice(jobs)}{RESET}\n{G}+{earnings} coins{RESET}\n{G}Balance: {self.money}{RESET}")
                 return
             
@@ -759,6 +737,19 @@ class SuperBot:
             # Check score
             if text == ".score":
                 self.send(chat_id, f"{G}[SCORE] {self.scores} points{RESET}")
+                return
+            
+            # Top players
+            if text == ".top":
+                self.cursor.execute("SELECT username, money FROM users ORDER BY money DESC LIMIT 10")
+                top = self.cursor.fetchall()
+                if not top:
+                    self.send(chat_id, f"{R}[!] No players yet{RESET}")
+                    return
+                txt = f"{G}[TOP 10 PLAYERS]{RESET}\n"
+                for i, (name, money) in enumerate(top, 1):
+                    txt += f"{C}{i}. {name[:15]}... - {money} coins{RESET}\n"
+                self.send(chat_id, txt)
                 return
             
             # Transfer money
@@ -905,7 +896,6 @@ class SuperBot:
                         self.cursor.execute('''
                             INSERT INTO inventory (user_id, item_name, quantity)
                             VALUES (?, ?, 1)
-                            ON CONFLICT DO UPDATE SET quantity = quantity + 1
                         ''', (USER_ID, self.shop_items[item]["name"]))
                         self.conn.commit()
                         self.send(chat_id, f"{G}[BOUGHT] {self.shop_items[item]['name']}{RESET}\n{G}-{price} coins{RESET}")
@@ -993,13 +983,13 @@ class SuperBot:
                 achievements = self.cursor.fetchall()
                 
                 if len(achievements) >= 3:
-                    self.add_achievement("🏆 Welcome")
+                    self.add_achievement("Welcome")
                 if self.level >= 5:
-                    self.add_achievement("⭐ Level 5")
+                    self.add_achievement("Level 5")
                 if self.level >= 10:
-                    self.add_achievement("⭐ Level 10")
+                    self.add_achievement("Level 10")
                 if self.money >= 10000:
-                    self.add_achievement("💰 Millionaire")
+                    self.add_achievement("Millionaire")
                 
                 self.cursor.execute("SELECT achievement_name FROM achievements WHERE user_id = ?", (USER_ID,))
                 achievements = self.cursor.fetchall()
@@ -1075,9 +1065,9 @@ class SuperBot:
 {G}╔══════════════════════════════╗
 ║         BOT INFO             ║
 ╠══════════════════════════════╣
-║  {C}Name:     SUPER BOT v7.0{RESET}{G}{' ' * 11}║
+║  {C}Name:     SUPER BOT v8.0{RESET}{G}{' ' * 11}║
 ║  {C}Author:   RTC Team{RESET}{G}{' ' * 19}║
-║  {C}Commands: 60+{RESET}{G}{' ' * 21}║
+║  {C}Commands: 65+{RESET}{G}{' ' * 21}║
 ║  {C}Database: SQLite + JSON{RESET}{G}{' ' * 12}║
 ║  {C}Backup:   kaizofil.ir{RESET}{G}{' ' * 15}║
 ╚══════════════════════════════╝{RESET}
@@ -1152,6 +1142,37 @@ class SuperBot:
                     "Security update released."
                 ]
                 self.send(chat_id, f"{C}[NEWS] {random.choice(news)}{RESET}")
+                return
+            
+            # Warn command
+            if text.startswith(".warn "):
+                target = text[6:].strip().replace("@", "")
+                self.cursor.execute("UPDATE users SET warns = warns + 1 WHERE user_id = ?", (target,))
+                self.cursor.execute("SELECT warns FROM users WHERE user_id = ?", (target,))
+                warns = self.cursor.fetchone()
+                self.conn.commit()
+                if warns and warns[0] >= 3:
+                    self.cursor.execute("UPDATE users SET is_banned = 1 WHERE user_id = ?", (target,))
+                    self.conn.commit()
+                    self.send(chat_id, f"{R}[WARN] {target} banned for 3 warnings!{RESET}")
+                else:
+                    self.send(chat_id, f"{Y}[WARN] {target} warned! ({warns[0]}/3){RESET}")
+                return
+            
+            # Ban command
+            if text.startswith(".ban "):
+                target = text[5:].strip().replace("@", "")
+                self.cursor.execute("UPDATE users SET is_banned = 1 WHERE user_id = ?", (target,))
+                self.conn.commit()
+                self.send(chat_id, f"{R}[BAN] {target} has been banned!{RESET}")
+                return
+            
+            # Unban command
+            if text.startswith(".unban "):
+                target = text[7:].strip().replace("@", "")
+                self.cursor.execute("UPDATE users SET is_banned = 0 WHERE user_id = ?", (target,))
+                self.conn.commit()
+                self.send(chat_id, f"{G}[UNBAN] {target} has been unbanned!{RESET}")
                 return
             
             # Auto reply
